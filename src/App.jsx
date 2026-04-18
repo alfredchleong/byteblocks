@@ -5,12 +5,15 @@ import muiTheme from './theme';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import BlocklyEditor from './components/BlocklyEditor';
+import ReactFlowEditor from './components/ReactFlowEditor';
 import OutputPanel from './components/OutputPanel';
 
-const BACKEND_URL = 'http://127.0.0.1:5000';
+const BACKEND_URL = 'http://127.0.0.1:8888';
 
 export default function App() {
-  const editorRef = useRef(null);
+  const blocklyRef = useRef(null);
+  const reactFlowRef = useRef(null);
+  const [editorMode, setEditorMode] = useState('blockly');
   const [code, setCode] = useState('');
   const [feedback, setFeedback] = useState('');
   const [activeCategory, setActiveCategory] = useState(-1);
@@ -44,10 +47,10 @@ export default function App() {
   const handleCategoryClick = useCallback((index) => {
     if (activeCategory === index) {
       setActiveCategory(-1);
-      editorRef.current?.clearCategory();
+      blocklyRef.current?.clearCategory();
     } else {
       setActiveCategory(index);
-      editorRef.current?.selectCategory(index);
+      blocklyRef.current?.selectCategory(index);
     }
   }, [activeCategory]);
 
@@ -79,9 +82,13 @@ export default function App() {
   // Header actions
   const handleNew = useCallback(() => {
     if (window.confirm('Create new project? Unsaved changes will be lost.')) {
-      editorRef.current?.clearWorkspace();
+      if (editorMode === 'blockly') {
+        blocklyRef.current?.clearWorkspace();
+      } else {
+        reactFlowRef.current?.clearWorkspace();
+      }
     }
-  }, []);
+  }, [editorMode]);
   const handleOpen = useCallback(() => alert('Open not implemented'), []);
   const handleSave = useCallback(() => alert('Save not implemented'), []);
 
@@ -89,16 +96,33 @@ export default function App() {
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
       <div className="flex flex-col h-screen bg-[#13131f] overflow-hidden">
-        <Header onNew={handleNew} onOpen={handleOpen} onSave={handleSave} />
+        <Header 
+          onNew={handleNew} 
+          onOpen={handleOpen} 
+          onSave={handleSave} 
+          mode={editorMode} 
+          onModeChange={setEditorMode} 
+        />
         <div className="flex flex-1 overflow-hidden">
-          <Sidebar
-            activeIndex={activeCategory}
-            onCategoryClick={handleCategoryClick}
-          />
-          <BlocklyEditor
-            ref={editorRef}
-            onCodeChange={handleCodeChange}
-            flyoutOpen={activeCategory !== -1}
+          <div style={{ display: editorMode === 'blockly' ? 'flex' : 'none' }}>
+            <Sidebar
+              activeIndex={activeCategory}
+              onCategoryClick={handleCategoryClick}
+            />
+          </div>
+          {/* Hide Blockly editor natively via container style instead of conditional rendering to preserve state */}
+          <div style={{ display: editorMode === 'blockly' ? 'flex' : 'none', flex: 1, minWidth: 0 }}>
+            <BlocklyEditor
+              ref={blocklyRef}
+              onCodeChange={handleCodeChange}
+              flyoutOpen={activeCategory !== -1}
+            />
+          </div>
+          
+          <ReactFlowEditor 
+            ref={reactFlowRef}
+            onCodeChange={handleCodeChange} 
+            hidden={editorMode !== 'reactflow'} 
           />
           <OutputPanel
             code={code}

@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.INFO,
 @app.route('/deploy', methods=['POST'])
 def deploy():
     # Deploy generated smart contract code
-    subprocess.run(['cmd.exe', '/c', 'npm', 'run', 'deploy'], check=True)
+    subprocess.run(['npm', 'run', 'deploy'], check=True)
     with open('deployment-info.json', 'r') as file:
         json_string = file.read()
 
@@ -43,7 +43,7 @@ I need an solidity smart contract for Polkadot based on this pseudocode, it is n
 
 USE SOLIDITY.
 """
-    response_data = call_gemini(system_prompt, formatted_user_message)
+    response_data = call_openai(system_prompt, formatted_user_message)
     if isinstance(response_data, tuple):
         # error tuple returned
         return response_data[0], response_data[1]
@@ -52,7 +52,7 @@ USE SOLIDITY.
     os.makedirs('contracts', exist_ok=True)
     with open('contracts/contract.sol', 'w') as f:
         f.write(response_data)
-    subprocess.run(['cmd.exe', '/c', 'npm', 'run', 'compile'], check=True)
+    subprocess.run(['npm', 'run', 'compile'], check=True)
     return jsonify({"message": response_data})
 
 @app.route('/review', methods=['POST'])
@@ -70,7 +70,7 @@ def review():
             f"{user_message}\n\n"
             "Please provide *only* feedback on clarity, security concerns, and design—no code samples."
 )
-    response_data = call_gemini(system_prompt, formatted_review_message)
+    response_data = call_openai(system_prompt, formatted_review_message)
     if isinstance(response_data, tuple):
         return response_data[0], response_data[1]
 
@@ -147,6 +147,6 @@ def call_gemini(system_prompt: str, user_content: str):
 
 if __name__ == '__main__':
     os.environ['PYTHONUNBUFFERED'] = '1'
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 8888))
     app.logger.info("Starting Flask server")
     app.run(host='0.0.0.0', port=port, debug=False)
