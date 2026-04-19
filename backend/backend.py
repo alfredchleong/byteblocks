@@ -47,7 +47,7 @@ I need an solidity smart contract for Polkadot based on this pseudocode, it is n
 
 USE SOLIDITY.
 """
-    response_data = call_openai(system_prompt, formatted_user_message)
+    response_data = call_gemini(system_prompt, formatted_user_message)
     if isinstance(response_data, tuple):
         # error tuple returned
         return response_data[0], response_data[1]
@@ -83,7 +83,7 @@ def review():
             f"{user_message}\n\n"
             "Please provide *only* feedback on clarity, security concerns, and design—no code samples."
         )
-    response_data = call_openai(system_prompt, formatted_review_message)
+    response_data = call_gemini(system_prompt, formatted_review_message)
     if isinstance(response_data, tuple):
         return response_data[0], response_data[1]
 
@@ -123,7 +123,7 @@ def run_function():
         "Provide ONLY the raw javascript code without markdown formatting or code blocks."
     )
     
-    response_data = call_openai(system_prompt, user_message)
+    response_data = call_gemini(system_prompt, user_message)
     if isinstance(response_data, tuple):
         return response_data[0], response_data[1]
 
