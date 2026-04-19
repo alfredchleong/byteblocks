@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import Confetti from 'react-confetti';
 import { ShoppingCart, CheckCircle, Package, ArrowLeft, Ticket } from 'lucide-react';
 
 const MOCK_PRODUCTS = [
@@ -49,7 +48,6 @@ export default function MarketplaceTab({ hidden }) {
       className="flex-1 h-full bg-[#0a0a0f] overflow-y-auto relative"
       style={{ display: hidden ? 'none' : 'block' }}
     >
-      {state === 'success' && <Confetti recycle={false} numberOfPieces={500} gravity={0.15} />}
 
       <div className="max-w-6xl mx-auto p-8">
         
