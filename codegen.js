@@ -1,7 +1,7 @@
 // codegen.js
 function astToInk(ast) {
   return ast.map(block => {
-    switch(block.opcode) {
+    switch (block.opcode) {
       case "CONTRACT_START":
         return `#[ink::contract] mod my_contract {\n  #[ink(storage)]\n  pub struct MyContract { /* … */ }\n  impl MyContract {`;
       case "ADD_LIQUIDITY":
@@ -15,10 +15,10 @@ function astToInk(ast) {
   }).join("\n") + "\n  }\n}";
 }
 
-// Hook up your Generate button:
+// Hook up your Generate button: 
 document.getElementById('generateBtn').addEventListener('click', () => {
   const text = document.querySelector('#workspace .blocks').textContent;
-  const ast  = scratchblocks.parse(text, {style: 'scratch3'});
+  const ast = scratchblocks.parse(text, { style: 'scratch3' });
   const code = astToInk(ast);
   document.getElementById('codeOutput').textContent = code;
 });
