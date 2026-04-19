@@ -3,8 +3,11 @@ import * as Blockly from 'blockly';
 import { registerBlocks, traverseBlock } from '../blockly/blocks';
 import blocklyDarkTheme from '../blockly/theme';
 import toolboxConfig from '../blockly/toolbox';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
-const BlocklyEditor = forwardRef(function BlocklyEditor({ onCodeChange, flyoutOpen }, ref) {
+const BlocklyEditor = forwardRef(function BlocklyEditor({ onCodeChange, flyoutOpen, onManualReview }, ref) {
   const containerRef = useRef(null);
   const workspaceRef = useRef(null);
 
@@ -133,12 +136,21 @@ const BlocklyEditor = forwardRef(function BlocklyEditor({ onCodeChange, flyoutOp
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div
-      ref={containerRef}
-      className="flex-1 h-full"
-      data-flyout-open={flyoutOpen ? 'true' : 'false'}
-      style={{ minWidth: 0 }}
-    />
+    <div className="relative flex-1 h-full" style={{ minWidth: 0 }}>
+      <div
+        ref={containerRef}
+        className="absolute inset-0"
+        data-flyout-open={flyoutOpen ? 'true' : 'false'}
+      />
+      {/* TODO: Replace this button with Mascot avatar eventually */}
+      <div className="absolute bottom-6 right-20 z-10 bg-[#1a1a28] p-1 rounded border border-[#2e2e3e] shadow-lg pointer-events-auto">
+        <Tooltip title="AI Help/Verify" arrow placement="top">
+          <IconButton onClick={onManualReview} size="medium" sx={{ color: '#818cf8', '&:hover': { bgcolor: '#818cf820' } }}>
+            <AutoAwesomeIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
+    </div>
   );
 });
 

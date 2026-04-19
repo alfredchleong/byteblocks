@@ -2,13 +2,10 @@ import React, { useState } from 'react';
 
 export default function OutputPanel({
   code,
-  feedback,
   isCompiling,
   isDeploying,
   onCompile,
   onDeploy,
-  autoReviewEnabled,
-  onToggleAutoReview,
 }) {
 
   return (
@@ -81,44 +78,6 @@ export default function OutputPanel({
             </>
           )}
         </button>
-      </div>
-
-      {/* AI Review section */}
-      <div className="border-t border-[#2e2e3e] shrink-0">
-        <div className="flex items-center justify-between px-4 py-2.5">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">AI Review</span>
-          </div>
-          <button
-            id="auto-review-toggle"
-            onClick={onToggleAutoReview}
-            className="relative w-8 h-4 rounded-full transition-colors duration-200 border-none outline-none cursor-pointer"
-            style={{
-              background: autoReviewEnabled ? '#6366f1' : '#2e2e3e',
-            }}
-          >
-            <span
-              className="absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all duration-200"
-              style={{ left: autoReviewEnabled ? '17px' : '2px' }}
-            />
-          </button>
-        </div>
-
-        {feedback && (
-          <div className="px-4 pb-3">
-            <p className="text-xs font-mono text-[#94a3b8] leading-relaxed whitespace-pre-wrap">
-              {feedback}
-            </p>
-          </div>
-        )}
-
-        {!feedback && (
-          <div className="px-4 pb-3">
-            <p className="text-xs font-mono text-[#64748b] italic">
-              Review feedback will appear here…
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

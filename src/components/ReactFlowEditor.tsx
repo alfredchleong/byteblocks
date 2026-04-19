@@ -18,6 +18,7 @@ import NodeToolbox from '../reactflow/NodeToolbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 const nodeTypes = {
   logic: LogicNode,
@@ -26,7 +27,7 @@ const nodeTypes = {
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
-const ReactFlowCanvas = forwardRef(({ onCodeChange, hidden }, ref) => {
+const ReactFlowCanvas = forwardRef(({ onCodeChange, hidden, onManualReview }, ref) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { screenToFlowPosition } = useReactFlow();
@@ -127,6 +128,15 @@ const ReactFlowCanvas = forwardRef(({ onCodeChange, hidden }, ref) => {
             <Tooltip title="Clear All Nodes" arrow placement="bottom">
               <IconButton onClick={clearWorkspace} size="small" sx={{ color: '#ef4444', '&:hover': { bgcolor: '#ef444420' } }}>
                 <DeleteOutlineIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+            </Tooltip>
+          </Panel>
+
+          {/* TODO: Replace this button with Mascot avatar eventually */}
+          <Panel position="bottom-right" className="bg-[#1a1a28] p-1 rounded border border-[#2e2e3e] shadow-lg mb-4 mr-4 pointer-events-auto">
+            <Tooltip title="AI Help/Verify" arrow placement="top">
+              <IconButton onClick={onManualReview} size="medium" sx={{ color: '#818cf8', '&:hover': { bgcolor: '#818cf820' } }}>
+                <AutoAwesomeIcon />
               </IconButton>
             </Tooltip>
           </Panel>

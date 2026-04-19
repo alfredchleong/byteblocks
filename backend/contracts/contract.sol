@@ -1,46 +1,42 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract KnotAPI {
+contract EthTokenMinter {
     // Storage variables
     address public owner;
     uint256 public ethTokenBalance;
     
     // Events
-    event EthTokenMinted(address indexed to, uint256 amount);
-    event KnotAPIAuthenticated(address indexed user);
-    event ProductAddedToCart(address indexed user, string productId);
-    event CheckoutCompleted(address indexed user);
-
+    event EthTokenMinted(address indexed recipient, uint256 amount);
+    
     // Constructor
     constructor() {
         owner = msg.sender;
     }
-
-    // Functions
-    function mintEthToken() public {
-        ethTokenBalance += 1 ether;
-        emit EthTokenMinted(msg.sender, 1 ether);
-    }
-
-    function authenticate() public {
-        emit KnotAPIAuthenticated(msg.sender);
-    }
-
-    function addProductToCart() public {
-        string memory productId = "B0B6WWVLP9";
-        emit ProductAddedToCart(msg.sender, productId);
-    }
-
-    function checkout() public {
-        emit CheckoutCompleted(msg.sender);
-    }
-
-    // Fallback function to handle incoming transactions
+    
+    // Fallback function to mint ETH tokens
     receive() external payable {
-        mintEthToken();
-        authenticate();
-        addProductToCart();
+        mintEthTokens(msg.sender);
+    }
+    
+    // Internal function to mint ETH tokens
+    function mintEthTokens(address recipient) internal {
+        uint256 amount = 1 ether;
+        ethTokenBalance += amount;
+        emit EthTokenMinted(recipient, amount);
+        
+        // Placeholder for Knot API integration
+        addProductToCart("NNIOI287F");
         checkout();
+    }
+    
+    // Placeholder function for Knot API: Add Product to Cart
+    function addProductToCart(string memory productId) internal {
+        // Implement API call logic here
+    }
+    
+    // Placeholder function for Knot API: Checkout
+    function checkout() internal {
+        // Implement API call logic here
     }
 }

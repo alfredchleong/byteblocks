@@ -16,33 +16,52 @@ export default function App() {
   const reactFlowRef = useRef(null);
   const [editorMode, setEditorMode] = useState('blockly');
   const [code, setCode] = useState('');
-  const [feedback, setFeedback] = useState('');
   const [activeCategory, setActiveCategory] = useState(-1);
   const [isCompiling, setIsCompiling] = useState(false);
   const [isDeploying, setIsDeploying] = useState(false);
 
-  // Auto-review state
-  const [autoReviewEnabled, setAutoReviewEnabled] = useState(false);
-  const reviewTimerRef = useRef(null);
 
   // Called every time workspace changes
   const handleCodeChange = useCallback((newCode) => {
     setCode(newCode);
+  }, []);
 
-    // Debounced auto-review
-    if (!autoReviewEnabled) return;
-    clearTimeout(reviewTimerRef.current);
-    reviewTimerRef.current = setTimeout(() => {
-      fetch(`${BACKEND_URL}/review`, {
+  // Manual review triggered by AI action button
+  const handleManualReview = useCallback(async () => {
+    setCode(prev => prev + '\n\nAI is reviewing...');
+    try {
+      let codeToReview = code;
+      const isCompiled = code.includes('pragma solidity') || code.includes('contract ');
+      
+      if (!isCompiled) {
+        setCode(prev => prev.replace('AI is reviewing...', 'Compiling code first...'));
+        const compileRes = await fetch(`${BACKEND_URL}/compile`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: code }),
+        });
+        if (!compileRes.ok) throw new Error(`Compile status ${compileRes.status}`);
+        const compileData = await compileRes.json();
+        codeToReview = compileData.message;
+        setCode(codeToReview + '\n\nAI is reviewing...');
+      }
+
+      const reviewRes = await fetch(`${BACKEND_URL}/review`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: newCode }),
-      })
-        .then(res => res.ok ? res.json() : Promise.reject(`Status ${res.status}`))
-        .then(data => setFeedback(data.message))
-        .catch(err => setFeedback('❌ Review error: ' + err));
-    }, 500);
-  }, [autoReviewEnabled]);
+        body: JSON.stringify({ 
+          message: codeToReview,
+          system_prompt: "verify"
+        }),
+      });
+      
+      if (!reviewRes.ok) throw new Error(`Review status ${reviewRes.status}`);
+      const reviewData = await reviewRes.json();
+      setCode(prev => prev.replace('AI is reviewing...', `--- AI Verify ---\n${reviewData.message}`));
+    } catch (err) {
+      setCode(prev => prev.replace('AI is reviewing...', `❌ Review error: ${err}`));
+    }
+  }, [code]);
 
   // Category selection — toggles: click same to close
   const handleCategoryClick = useCallback((index) => {
@@ -117,6 +136,7 @@ export default function App() {
               ref={blocklyRef}
               onCodeChange={handleCodeChange}
               flyoutOpen={activeCategory !== -1}
+              onManualReview={handleManualReview}
             />
           </div>
           
@@ -124,19 +144,17 @@ export default function App() {
             ref={reactFlowRef}
             onCodeChange={handleCodeChange}
             hidden={editorMode !== 'reactflow'}
+            onManualReview={handleManualReview}
           />
           
           <MarketplaceTab hidden={editorMode !== 'marketplace'} />
 
           <OutputPanel
             code={code}
-            feedback={feedback}
             isCompiling={isCompiling}
             isDeploying={isDeploying}
             onCompile={handleCompile}
             onDeploy={handleDeploy}
-            autoReviewEnabled={autoReviewEnabled}
-            onToggleAutoReview={() => setAutoReviewEnabled(prev => !prev)}
           />
         </div>
       </div>

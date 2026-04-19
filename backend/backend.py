@@ -21,6 +21,10 @@ logging.basicConfig(level=logging.INFO,
 def deploy():
     # Deploy generated smart contract code
     subprocess.run(['npm', 'run', 'deploy'], check=True)
+
+    # if windows, uncomment this:
+    # subprocess.run(['cmd.exe', '/c', 'npm', 'run', 'compile'], check=True)
+
     with open('deployment-info.json', 'r') as file:
         json_string = file.read()
 
@@ -60,16 +64,25 @@ def review():
     # Review pseudocode and suggest improvements
     incoming_data = request.json
     user_message = incoming_data.get('message', '')
+    system_prompt_override = incoming_data.get('system_prompt')
     app.logger.info(f"Review request message: {user_message[:50]}...")
 
-    # Use a specialized system prompt or reuse general one
-    with open('reviewsystemprompt.txt', 'r', encoding='utf-8') as file:
-        system_prompt = file.read()
+    if system_prompt_override == 'verify':
+        with open('verifysystemprompt.md', 'r', encoding='utf-8') as file:
+            system_prompt = file.read()
+        formatted_review_message = f"Here is the compiled Solidity code:\n{user_message}\n\nPlease review it according to the instructions."
+    elif system_prompt_override:
+        system_prompt = system_prompt_override
+        formatted_review_message = user_message
+    else:
+        # Use a specialized system prompt or reuse general one
+        with open('reviewsystemprompt.txt', 'r', encoding='utf-8') as file:
+            system_prompt = file.read()
         formatted_review_message = (
             "Here is some pseudocode describing contract logic:\n"
             f"{user_message}\n\n"
             "Please provide *only* feedback on clarity, security concerns, and design—no code samples."
-)
+        )
     response_data = call_openai(system_prompt, formatted_review_message)
     if isinstance(response_data, tuple):
         return response_data[0], response_data[1]
