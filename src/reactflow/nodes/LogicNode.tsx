@@ -43,6 +43,10 @@ const getNodeConfig = (type: string) => {
   } else if (type === 'while_do') {
     config.inputs.push({ id: 'CONDITION', label: 'Condition' });
     config.branches.push({ id: 'DO', label: 'Do' });
+  } else if (type === 'when_event_emitted') {
+    config.inputs.push({ id: 'EVENT_NAME', label: 'Event Name' });
+  } else if (type === 'knot_sync_cart') {
+    config.inputs.push({ id: 'PRODUCT_ID', label: 'Product ID (ASIN)' });
   } else if (type === 'on_tx_confirmed') {
     config.branches.push({ id: 'DO', label: 'Do' });
   } else if (['math_add', 'math_subtract', 'math_multiply', 'math_divide', 'math_min', 'math_compare', 'logic_and', 'logic_or', 'text_join'].includes(type)) {

@@ -7,6 +7,7 @@ import Sidebar from './components/Sidebar';
 import BlocklyEditor from './components/BlocklyEditor';
 import ReactFlowEditor from './components/ReactFlowEditor';
 import OutputPanel from './components/OutputPanel';
+import MarketplaceTab from './components/MarketplaceTab';
 
 const BACKEND_URL = 'http://127.0.0.1:8888';
 
@@ -119,11 +120,14 @@ export default function App() {
             />
           </div>
           
-          <ReactFlowEditor 
+          <ReactFlowEditor
             ref={reactFlowRef}
-            onCodeChange={handleCodeChange} 
-            hidden={editorMode !== 'reactflow'} 
+            onCodeChange={handleCodeChange}
+            hidden={editorMode !== 'reactflow'}
           />
+          
+          <MarketplaceTab hidden={editorMode !== 'marketplace'} />
+
           <OutputPanel
             code={code}
             feedback={feedback}

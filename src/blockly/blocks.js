@@ -89,6 +89,9 @@ function blockToEnglish(block) {
     case 'when_contract_starts':   return '▶️ when contract starts';
     case 'when_tx_received':       return '▶️ when transaction received';
     case 'when_event_emitted':     return '▶️ when event emitted';
+    case 'knot_auth':              return 'Knot API: Authenticate';
+    case 'knot_sync_cart':         return `Knot API: Add Product to Cart (Product ID: ${getInputText(block, 'PRODUCT_ID')})`;
+    case 'knot_checkout':          return 'Knot API: Checkout';
     case 'if_do': {
       const c = getInputText(block, 'CONDITION');
       const b = getStatementText(block, 'DO');

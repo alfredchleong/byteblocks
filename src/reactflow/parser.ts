@@ -1,5 +1,5 @@
-export function generateFlowCode(nodes: any[], edges: any[]): string {
-  if (!nodes || nodes.length === 0) return '';
+export function generateFlowCode(nodes: any[], edges: any[], startNodeId?: string): string {
+  if (nodes.length === 0) return '';
 
   const getNode = (id: string) => nodes.find(n => n.id === id);
 
@@ -8,7 +8,12 @@ export function generateFlowCode(nodes: any[], edges: any[]): string {
   // Find root nodes: nodes with no incoming execution edges, AND are not data-only nodes.
   // Execution edges connect to 'execIn'.
   const incomingExecEdges = edges.filter(e => e.targetHandle === 'execIn');
-  const roots = nodes.filter(n => !isDataOnly(n.data.type) && !incomingExecEdges.some(e => e.target === n.id));
+  let roots = nodes.filter(n => !isDataOnly(n.data.type) && !incomingExecEdges.some(e => e.target === n.id));
+  
+  if (startNodeId) {
+    const rootNode = getNode(startNodeId);
+    if (rootNode) roots = [rootNode];
+  }
 
   // Helper to get text for an input (either from a connected node, or typed text)
   const getInputText = (nodeId: string, inputId: string): string => {
@@ -47,7 +52,10 @@ export function generateFlowCode(nodes: any[], edges: any[]): string {
     switch (type) {
       case 'when_contract_starts': return '▶️ when contract starts';
       case 'when_tx_received':     return '▶️ when transaction received';
-      case 'when_event_emitted':   return '▶️ when event emitted';
+      case 'when_event_emitted':   return `▶️ when event emitted (${g('EVENT_NAME')})`;
+      case 'knot_auth':            return 'Knot API: Authenticate';
+      case 'knot_sync_cart':       return `Knot API: Add Product to Cart (Product ID: ${g('PRODUCT_ID')})`;
+      case 'knot_checkout':        return 'Knot API: Checkout';
       case 'on_tx_confirmed': {
         const b = getBranchText(nodeId, 'DO', 2);
         return `on tx confirmed do\n${b}end`;

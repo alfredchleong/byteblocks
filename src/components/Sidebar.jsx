@@ -15,6 +15,7 @@ import WalletIcon from '@mui/icons-material/Wallet';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import TextFieldsOutlinedIcon from '@mui/icons-material/TextFieldsOutlined';
 import ExtensionOutlinedIcon from '@mui/icons-material/ExtensionOutlined';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 
 // Map category index → icon component + colour
 const CATEGORY_META = [
@@ -30,7 +31,6 @@ const CATEGORY_META = [
   { icon: WalletIcon,                      colour: '#E6007A', label: 'Wallet & TX' },
   { icon: SwapHorizOutlinedIcon,           colour: '#D65C5C', label: 'AMM' },
   { icon: TextFieldsOutlinedIcon,          colour: '#00B2FF', label: 'Text' },
-  { icon: ExtensionOutlinedIcon,           colour: '#AA00AA', label: 'Custom' },
 ];
 
 export default function Sidebar({ activeIndex, onCategoryClick }) {

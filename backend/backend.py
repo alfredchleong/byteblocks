@@ -75,6 +75,68 @@ def review():
         return response_data[0], response_data[1]
 
     return jsonify({"message": response_data})
+    
+@app.route('/api/knot/buy', methods=['POST'])
+def knot_buy():
+    incoming_data = request.json
+    external_id = incoming_data.get('external_id')
+    
+    if not external_id:
+        return jsonify({"status": "error", "message": "external_id is required"}), 400
+        
+    try:
+        from knot_api import execute_purchase
+        result = execute_purchase(external_id)
+        return jsonify(result)
+    except Exception as e:
+        app.logger.error(f"Knot API Error: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/run_function', methods=['POST'])
+def run_function():
+    incoming_data = request.json
+    user_message = incoming_data.get('message', '')
+    app.logger.info(f"Run function request message: {user_message[:50]}...")
+
+    system_prompt = (
+        "You are an expert Web3 developer. The user will provide pseudo-code for a specific transaction flow. "
+        "The smart contract is ALREADY deployed on the testnet. "
+        "Your task is to write a Node.js script (using ethers.js or polkadot.js, depending on the ecosystem inferred, default to ethers.js for Ethereum compatible chains) "
+        "that connects to the testnet, points to the deployed contract, and executes EXACTLY the logic described in the pseudo-code. "
+        "Do NOT write a Smart Contract. ONLY write the executable Node.js interaction script. "
+        "CRITICAL: You MUST write the script as an ES Module using `import` syntax (e.g., `import { ethers } from 'ethers';`). Do NOT use `require()`. "
+        "If you see Knot API instructions (Authenticate, Add Product to Cart, Checkout), you must generate the `fetch` requests to `https://development.knotapi.com/cart` and `/cart/checkout`. "
+        "However, because this is a Hackathon Demo, you MUST comment out the actual execution of the `fetch` API requests so we don't accidentally buy real products. Leave the fully formed fetch code in the script, just commented out. "
+        "Provide ONLY the raw javascript code without markdown formatting or code blocks."
+    )
+    
+    response_data = call_openai(system_prompt, user_message)
+    if isinstance(response_data, tuple):
+        return response_data[0], response_data[1]
+
+    # Save to temp script and execute
+    script_path = "execute_temp.mjs"
+    with open(script_path, 'w') as f:
+        f.write(response_data)
+        
+    try:
+        # Run the script and capture output
+        result = subprocess.run(['node', script_path], capture_output=True, text=True, timeout=30)
+        output = result.stdout if result.returncode == 0 else result.stderr
+        
+        # Clean up temp file
+        if os.path.exists(script_path):
+            os.remove(script_path)
+            
+        return jsonify({"status": "success", "message": output})
+    except subprocess.TimeoutExpired:
+        if os.path.exists(script_path):
+            os.remove(script_path)
+        return jsonify({"status": "error", "message": "Execution timed out after 30 seconds."})
+    except Exception as e:
+        if os.path.exists(script_path):
+            os.remove(script_path)
+        return jsonify({"status": "error", "message": str(e)})
 
 
 def call_openai(system_prompt: str, user_content: str):

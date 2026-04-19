@@ -10,6 +10,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import Tooltip from '@mui/material/Tooltip';
 
 const NODE_CATEGORIES = [
@@ -139,6 +140,16 @@ const NODE_CATEGORIES = [
       { type: 'remove_liquidity', label: 'Remove Liquidity' },
       { type: 'swapAforB', label: 'Swap A for B' },
       { type: 'swapBforA', label: 'Swap B for A' },
+    ]
+  },
+  {
+    title: 'Web2 Integrations',
+    color: '#18C4A3',
+    icon: <ShoppingCartOutlinedIcon fontSize="small" />,
+    nodes: [
+      { type: 'knot_auth', label: 'Authenticate Session' },
+      { type: 'knot_sync_cart', label: 'Add Product to Cart' },
+      { type: 'knot_checkout', label: 'Checkout' },
     ]
   },
   {

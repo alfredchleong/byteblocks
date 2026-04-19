@@ -9,6 +9,8 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import HexagonOutlinedIcon from '@mui/icons-material/HexagonOutlined';
 import ViewModuleOutlinedIcon from '@mui/icons-material/ViewModuleOutlined';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
+import MouseOutlinedIcon from '@mui/icons-material/MouseOutlined';
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 
 export default function Header({ onNew, onOpen, onSave, mode = 'blockly', onModeChange }) {
   const handleModeChange = (event, newMode) => {
@@ -25,7 +27,7 @@ export default function Header({ onNew, onOpen, onSave, mode = 'blockly', onMode
           <HexagonOutlinedIcon sx={{ fontSize: 16, color: '#6366f1' }} />
         </div>
         <h1 className="text-base font-semibold text-[#e2e8f0] tracking-tight leading-none">
-          DotBlocks
+          nodes@work
         </h1>
         <span className="text-[10px] font-mono text-[#64748b] bg-[#22222f] px-1.5 py-0.5 rounded-md border border-[#2e2e3e]">
           beta
@@ -66,6 +68,10 @@ export default function Header({ onNew, onOpen, onSave, mode = 'blockly', onMode
           <ToggleButton value="reactflow" aria-label="node editor">
             <AccountTreeOutlinedIcon sx={{ fontSize: 18, mr: 1 }} />
             <span className="text-sm font-medium">Nodes</span>
+          </ToggleButton>
+          <ToggleButton value="marketplace" aria-label="marketplace editor">
+            <StorefrontOutlinedIcon sx={{ fontSize: 18, mr: 1 }} />
+            <span className="text-sm font-medium">Marketplace</span>
           </ToggleButton>
         </ToggleButtonGroup>
       </div>

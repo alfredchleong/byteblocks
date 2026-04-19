@@ -138,13 +138,7 @@ const toolboxConfig = {
         { kind: 'block', type: 'text_join' },
         { kind: 'block', type: 'msg_sender' },
       ],
-    },
-    {
-      kind: 'category',
-      name: 'Custom',
-      colour: '#AA00AA',
-      contents: [],
-    },
+    }
   ],
 };
 
